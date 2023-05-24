@@ -15,8 +15,10 @@ Explanation of the zombie process
 	(please complete this part);
 
 ------------------------------------------------------------- */
+#include <sys/wait.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
-#include <sys/select.h>
 
 /* Prototype */
 void createChildAndRead (int);
@@ -64,12 +66,19 @@ Description:
 void createChildAndRead(int prcNum)
 {
 	printf("parent process number is: %d\n", (int) prcNum);
+	printf("Parent PID is %ld\n", (long) getpid());
 
-	int i = prcNum -1;
+	pid_t pids[prcNum];
 
-	for(;i > 0; i--){
+	int i = prcNum - 1;
 
-	printf("fork process number is: %d\n", (int) i);
+	for(;i >= 0; i--){
+		pids[i] = fork();
+		if(pids[i] == 0){
+			printf("child process number is: %d\n", (int) i);
+			printf("Child PID is %ld\n", (long) getpid());
+			
+		}
 	}
-	
+
 }
