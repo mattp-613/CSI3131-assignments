@@ -69,16 +69,18 @@ Description:
 void createChildAndRead(int prcNum)
 {
 	pid_t pids[prcNum];
-	for(int i = prcNum; i >=0; i--){
-		int pid = fork();
-		if(pid == 0) //if it is a child of the current parent
-        {
-			printf("i is: %d\n", (int) i);
-            printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
-			pids[i] = getpid();
+
+	if(prcNum !=0){
+		if(fork()==0){
+			printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+			createChildAndRead(prcNum - 1);
 			exit(0);
-        }
+		}
 	}
 
+}
 
+void createChildAndReadHelper(int prcNum)
+{
+	//Recursively creates forks
 }
