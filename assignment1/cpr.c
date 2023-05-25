@@ -68,27 +68,17 @@ Description:
 
 void createChildAndRead(int prcNum)
 {
-	//printf("parent process number is: %d\n", (int) prcNum);
-	//printf("Parent PID is %ld\n", (long) getpid());
-
-
-	//What this does is it creates five children frm the same parent
-	//However, we want to have four parents, five children, get it?
-	/*
-	for(int i = 0; i<prcNum; i++) // loop will run n times (n=5)
-    {
-        if(fork() == 0)
+	pid_t pids[prcNum];
+	for(int i = prcNum; i >=0; i--){
+		int pid = fork();
+		if(pid == 0) //if it is a child of the current parent
         {
 			printf("i is: %d\n", (int) i);
             printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
-
-				exit(0);
+			pids[i] = getpid();
+			exit(0);
         }
-    }*/
-	//pid_t pids[prcNum];
-	prcNum = prcNum -1; //decrement for each fork
-	//pids[i] = fork();
-    printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
-	exit(0);
+	}
+
 
 }
