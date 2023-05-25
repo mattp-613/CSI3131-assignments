@@ -37,6 +37,9 @@ Description:
 
 int main (int ac, char **av)
 {
+ int fd[2];
+ pipe(fd);
+
  int processNumber; 
  if (ac == 2)
  {
@@ -65,20 +68,27 @@ Description:
 
 void createChildAndRead(int prcNum)
 {
-	printf("parent process number is: %d\n", (int) prcNum);
-	printf("Parent PID is %ld\n", (long) getpid());
+	//printf("parent process number is: %d\n", (int) prcNum);
+	//printf("Parent PID is %ld\n", (long) getpid());
 
-	pid_t pids[prcNum];
 
-	int i = prcNum - 1;
+	//What this does is it creates five children frm the same parent
+	//However, we want to have four parents, five children, get it?
+	/*
+	for(int i = 0; i<prcNum; i++) // loop will run n times (n=5)
+    {
+        if(fork() == 0)
+        {
+			printf("i is: %d\n", (int) i);
+            printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
 
-	for(;i >= 0; i--){
-		pids[i] = fork();
-		if(pids[i] == 0){
-			printf("child process number is: %d\n", (int) i);
-			printf("Child PID is %ld\n", (long) getpid());
-			
-		}
-	}
+				exit(0);
+        }
+    }*/
+	//pid_t pids[prcNum];
+	prcNum = prcNum -1; //decrement for each fork
+	//pids[i] = fork();
+    printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+	exit(0);
 
 }
