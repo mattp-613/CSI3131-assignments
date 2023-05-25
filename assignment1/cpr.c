@@ -74,12 +74,19 @@ void createChildAndRead(int prcNum)
 
 pid_t createChildAndReadHelper(int i, pid_t temp[])
 {
+	//Recursively creates a pid_t array for the forked proccesses
 	if(i != 0){
 		temp[i] = fork();
 		if(temp[i]==0){
 			printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+
+			//WRITE TO PIPE HERE!
+
+			//Creates new child
 			createChildAndReadHelper(i - 1, temp);
+
 			exit(0);
 		}
 	}
+	exit(0); //end recursive loop
 }
