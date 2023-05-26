@@ -19,6 +19,11 @@ Explanation of the zombie process
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 25
+#define READ_END	0
+#define WRITE_END	1
 
 /* Prototype */
 void createChildAndRead (int);
@@ -37,8 +42,6 @@ Description:
 
 int main (int ac, char **av)
 {
- int fd[2];
- pipe(fd);
 
  int processNumber; 
  if (ac == 2)
@@ -68,6 +71,8 @@ Description:
 
 void createChildAndRead(int prcNum)
 {
+	/*Calls the recursive helper function.
+	Has a useless pid_t array that may be useful for some situations.*/
 	pid_t temp[prcNum];
 	pid_t pids = createChildAndReadHelper(prcNum, temp);
 }
@@ -75,16 +80,32 @@ void createChildAndRead(int prcNum)
 pid_t createChildAndReadHelper(int i, pid_t temp[])
 {
 	//Recursively creates a pid_t array for the forked proccesses
+
+	char write_msg[BUFFER_SIZE] = "test :)";
+ 	char read_msg[BUFFER_SIZE];
+
 	if(i != 0){
 		temp[i] = fork();
-		if(temp[i]==0){
-			printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
-
+		if(temp[i]==0){ //child
+			//printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+			printf("Process %d begins\n",i);
 			//WRITE TO PIPE HERE!
+			int fd[2];
+			pipe(fd);
+			
 
 			//Creates new child
 			createChildAndReadHelper(i - 1, temp);
 
+			exit(0);
+		}
+
+		else{ //parent
+			
+			//parent waits here for whatever i is equal to
+			//READ TO PIPE HERE and write pipe here
+			wait(NULL);
+			printf("Process %d ends\n",i);
 			exit(0);
 		}
 	}
