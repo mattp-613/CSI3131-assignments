@@ -92,6 +92,11 @@ pid_t createChildAndReadHelper(int i, pid_t temp[])
 			printf("Process %d begins\n",i);
 			//WRITE TO PIPE HERE!
 
+ 			/*I'm not sure exactly why a pipe is required or what you need to use it for.
+			I'm just using it to send the text "Process" so I can show that it is possible
+			to send information from the child to the parent, however I don't think it's necessary at all,
+			well at least for this implementation.*/
+
 			char write_msg[BUFFER_SIZE] = ("Process ");
 
 			//close the unused end of the pipe
