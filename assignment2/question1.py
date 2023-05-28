@@ -11,9 +11,16 @@ def createThread(maxThreads, allNumbers):
     for i in range(maxThreads):
         start = i * numbersPerThread #calculate the starting index for this thread
         end = start + numbersPerThread #calculate the ending index for this thread
+        print("start: {}".format(start))
+        print("end: {}".format(end))
+
         if i == maxThreads - 1: #the last thread will have to check any remaining numbers
             end = len(allNumbers)
             threadList.append(allNumbers[start:end]) #add the array of numbers for this thread to the threadList
+
+        else:
+            threadList.append(allNumbers[start:end])
+
     return threadList
 
 def main():
@@ -23,10 +30,10 @@ def main():
 
     allNumbers = list(range(0,maxNumber + 1)) #array of every single number 0->maxNumber
 
-    print(allNumbers)
+    #print(allNumbers)
     threads_to_multithread = createThread(maxThreads, allNumbers)
 
-    print(threads_to_multithread)
+    
 
 if __name__ == '__main__':
     main()
