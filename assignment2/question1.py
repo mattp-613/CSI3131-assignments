@@ -1,3 +1,8 @@
+'''
+Matthew Petrucci 300119235
+
+'''
+
 import threading
 
 def createThread(maxThreads, allNumbers):
@@ -11,8 +16,6 @@ def createThread(maxThreads, allNumbers):
     for i in range(maxThreads):
         start = i * numbersPerThread #calculate the starting index for this thread
         end = start + numbersPerThread #calculate the ending index for this thread
-        print("start: {}".format(start))
-        print("end: {}".format(end))
 
         if i == maxThreads - 1: #the last thread will have to check any remaining numbers
             end = len(allNumbers)
@@ -22,6 +25,18 @@ def createThread(maxThreads, allNumbers):
             threadList.append(allNumbers[start:end])
 
     return threadList
+
+def findPrimes(numbers):
+    #Finds the prime numbers in the given array and prints them
+    #That's it.
+    #Pretty simple
+
+    for num in numbers:
+        for i in range(2, num):
+            if (num % i) == 0:
+                break
+        else:
+            print(num)
 
 def main():
     
@@ -33,7 +48,9 @@ def main():
     #print(allNumbers)
     threads_to_multithread = createThread(maxThreads, allNumbers)
 
+    for i in range(0, maxThreads):
+        thread = threading.Thread(target=findPrimes, kwargs={'numbers':threads_to_multithread[i]})
+        thread.start()
     
-
 if __name__ == '__main__':
     main()
