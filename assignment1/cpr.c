@@ -12,6 +12,13 @@ Description: This program contains the code for creation
 Explanation of the zombie process
 (point 5 of "To be completed" in the assignment):
 
+A zombie process is when a process has been terminated but the memory used for the process is still
+allocated and not freed. This usually happens when a parent process is waiting for the child to finish
+the work before finally terminating. So, while all the processes are terminated, they are not killed
+yet until all the children processes have been killed themselves. The zombie process is finally
+properly killed when all of the children are killed.
+In this case, Process 5 has to wait for Process 4, Process 4 has to wait for Process 3, etc...
+
 	(please complete this part);
 
 ------------------------------------------------------------- */
@@ -127,7 +134,7 @@ pid_t createChildAndReadHelper(int i, pid_t temp[])
             //close the read end of the pipe
             close(fd[READ_END]);
 
-			printf("%s%d ends\n",read_msg,i); //print the readed message from the pipe
+			printf("%s%d ends\n",read_msg,i); //print the read message from the pipe
 
 			exit(0);
 		}
