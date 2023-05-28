@@ -81,18 +81,27 @@ pid_t createChildAndReadHelper(int i, pid_t temp[])
 {
 	//Recursively creates a pid_t array for the forked proccesses
 
-	char write_msg[BUFFER_SIZE] = "test :)";
  	char read_msg[BUFFER_SIZE];
 
+	int fd[2];
+    pipe(fd);
 	if(i != 0){
 		temp[i] = fork();
 		if(temp[i]==0){ //child
 			//printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
 			printf("Process %d begins\n",i);
 			//WRITE TO PIPE HERE!
-			int fd[2];
-			pipe(fd);
-			
+
+			char write_msg[BUFFER_SIZE] = ("Process ");
+
+			//close the unused end of the pipe
+            close(fd[READ_END]);
+
+            //write to the pipe
+            write(fd[WRITE_END], write_msg, strlen(write_msg) + 1);
+
+            //close the write end of the pipe
+            close(fd[WRITE_END]);
 
 			//Creates new child
 			createChildAndReadHelper(i - 1, temp);
@@ -101,11 +110,20 @@ pid_t createChildAndReadHelper(int i, pid_t temp[])
 		}
 
 		else{ //parent
-			
-			//parent waits here for whatever i is equal to
-			//READ TO PIPE HERE and write pipe here
-			wait(NULL);
-			printf("Process %d ends\n",i);
+
+			wait(NULL); //wait for child to finish
+
+			//close the unused end of the pipe
+            close(fd[WRITE_END]);
+
+            //read from the pipe
+            read(fd[READ_END], read_msg, BUFFER_SIZE);
+
+            //close the read end of the pipe
+            close(fd[READ_END]);
+
+			printf("%s%d ends\n",read_msg,i); //print the readed message from the pipe
+
 			exit(0);
 		}
 	}
