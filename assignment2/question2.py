@@ -7,44 +7,36 @@ require the next thread (either child or parallel) to finish, and thus wouldn't 
 So for this implementation I have one thread that solves the fibonacci sequence and the other that prints
 the values.
 '''
+fibonacciDone = False
+fibonacciNumbers = []
 
 import threading
-from time import sleep
-
-def createThread(maxThreads):
-    #Each thread
-
-    pass
 
 def findFibonacci(n):
 
+    global fibonacciDone
     # start the sequence
     f0, f1 = 0, 1
     # compute the nth number
     for _ in range(0, n):
         fibonacciNumbers.append(f0)
         f0, f1 = f1, (f1 + f0)
+    fibonacciDone = True
     return f0
 
 def main():
     
     global fibonacciNumbers
-    fibonacciNumbers = []
-    maxThreads = 2
+    maxThreads = 2 #Do not change
     maxNumber = int(input("Enter the n number for Fibonacci: "))
-
-    #allNumbers = list(range(0,maxNumber + 1)) #array of every single number 0->maxNumber
-    #threads_to_multithread = createThread(maxThreads, allNumbers)
 
     for i in range(0, maxThreads):
         if i == 0: #first thread will solve fibonacci numbers and add them to an array
             thread = threading.Thread(target=findFibonacci, kwargs={'n':maxNumber})
             thread.start()
         if i == 1: #second thread will print every time the first thread creates a number
-            while True:
-                if len(fibonacciNumbers) > 0:
-                    print(fibonacciNumbers.pop(0))
+            while len(fibonacciNumbers) > 0 and fibonacciDone: #Check if there are no numbers left and first thread is done
+                print(fibonacciNumbers.pop(0))
 
-                #TODO: if condition to break the loop when thread 0 is done
 if __name__ == '__main__':
     main()
