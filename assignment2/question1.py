@@ -1,15 +1,16 @@
 '''
 Matthew Petrucci 300119235
-
+This is a python implementation of Assignment 2 Question 1 that requires a multithreaded solution to
+finding prime numbers from 0 to the given maximum number.
 '''
 
 import threading
 
 def createThread(maxThreads, allNumbers):
-        #Takes a number of threads and an array with all the numbers to be distributed equally amongst the threads
-        #Allocates all numbers from 0 to maxNumber equally amongst all the threads in an array.
-        #The array will consist of maxThreads numbers of array that contains all the numbers that each individual thread needs to solve.
-        #Basically, each array in the array is a thread and the numbers it must find for the prime number
+    #Takes a number of threads and an array with all the numbers to be distributed equally amongst the threads
+    #for this implementation, it allocates all numbers from 0 to maxNumber equally amongst all the threads in an array.
+    #The array will consist of maxThreads numbers of array that contains all the numbers that each individual thread needs to solve.
+    #Basically, each array in the array is a thread and the numbers it must find for the prime number
         
     threadList = []
     numbersPerThread = len(allNumbers) // maxThreads #calculate the number of numbers each thread will have to check
@@ -45,7 +46,6 @@ def main():
 
     allNumbers = list(range(0,maxNumber + 1)) #array of every single number 0->maxNumber
 
-    #print(allNumbers)
     threads_to_multithread = createThread(maxThreads, allNumbers)
 
     for i in range(0, maxThreads):
