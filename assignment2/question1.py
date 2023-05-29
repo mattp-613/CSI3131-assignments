@@ -1,7 +1,8 @@
 '''
 Matthew Petrucci 300119235
 This is a python implementation of Assignment 2 Question 1 that requires a multithreaded solution to
-finding prime numbers from 0 to the given maximum number.
+finding prime numbers from 0 to the given maximum number. A maxThreads amount of threads will run concurrently
+to find all prime numbers in their given interval.
 '''
 
 import threading
