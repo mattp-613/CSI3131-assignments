@@ -21,6 +21,8 @@ void *student_thread(void *arg);
 void program(int student_id);
 void help_student(int student_id);
 int student_waiting(int student_id);
+void add_waiting(int student_id);
+void remove_waiting(int student_id);
 
 int main() {
     pthread_t ta;
@@ -57,8 +59,21 @@ void *ta_thread(void *arg){
 void *student_thread(void *arg) {
     int student_id = *((int *)arg);
 
-    while(1){
+    while(student_waiting(student_id) == 0){
         program(student_id);
+
+        // Need help from TA
+
+        pthread_mutex_lock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
+
+        if(students_waiting != MAX_CHAIRS){
+            waiting_room
+        }
+
+        else{
+            printf("Student %d cannot get help from the TA.\n", student_id);
+        }
+
     }
 
     pthread_exit(NULL);
@@ -77,11 +92,19 @@ void help_student(int student_id){
     sleep(help_time);
 }
 
-int student_waiting(int student_id){
+int student_waiting(int student_id){ // Check if a student is already waiting for a chair
     for(int i = 0; i < MAX_CHAIRS; i++){
-        if(waiting_room[i] == student_id){ // Check if a student is already waiting for a chair
+        if(waiting_room[i] == student_id){ 
             return 1;
         }
     }
     return 0;
+}
+
+void add_waiting(int student_id){ // Adds a student to the waiting list
+
+}
+
+void add_waiting(int student_id){ // Removes a student from the waiting list
+    
 }
