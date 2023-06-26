@@ -5,10 +5,12 @@
 #include <unistd.h>
 
 // Defines
-#define MAX_STUDENTS 10
+#define MAX_STUDENTS 12
 #define MAX_CHAIRS 3
 // Global variables
 int students_waiting = 0;
+int help_time = 6;
+int waiting_room[MAX_CHAIRS];
 sem_t sem_ta;
 sem_t sem_students;
 pthread_mutex_t mutex_chairs = PTHREAD_MUTEX_INITIALIZER;
@@ -18,6 +20,7 @@ void *ta_thread(void *arg);
 void *student_thread(void *arg);
 void program(int student_id);
 void help_student(int student_id);
+int student_waiting(int student_id);
 
 int main() {
     pthread_t ta;
@@ -71,6 +74,14 @@ void program(int student_id) {
 void help_student(int student_id){
     printf("Student %d is getting help from the TA.\n", student_id);
     // Simulate helping by sleeping for a random period of time
-    int help_time = rand() % 5 + 4;
     sleep(help_time);
+}
+
+int student_waiting(int student_id){
+    for(int i = 0; i < MAX_CHAIRS; i++){
+        if(waiting_room[i] == student_id){ // Check if a student is already waiting for a chair
+            return 1;
+        }
+    }
+    return 0;
 }
