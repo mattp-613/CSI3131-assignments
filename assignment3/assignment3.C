@@ -17,6 +17,7 @@ pthread_mutex_t mutex_chairs = PTHREAD_MUTEX_INITIALIZER;
 void *ta_thread(void *arg);
 void *student_thread(void *arg);
 void program(int student_id);
+void help_student(int student_id);
 
 int main() {
     pthread_t ta;
@@ -36,11 +37,6 @@ int main() {
         pthread_create(&students[i], NULL, student_thread, (void *)&student_ids[i]);
     }
 
-    // Join student threads
-    for (i = 0; i < MAX_STUDENTS; i++) {
-        pthread_join(students[i], NULL);
-    }
-
     // Below should not happen unless a thread implodes
 
     // Destroy semaphores and mutex (garbage collect)
@@ -51,58 +47,15 @@ int main() {
     return 0;
 }
 
-void *ta_thread(void *arg) {
-    while (1) {
-        sem_wait(&sem_ta);  // Wait for a student to wake up the TA
-
-        while (1) {
-
-            pthread_mutex_lock(&mutex_chairs);
-
-            if (students_waiting > 0) {
-                sem_post(&sem_students);  // Signal student to get help
-                students_waiting--;
-                pthread_mutex_unlock(&mutex_chairs);
-
-            } 
-            
-            else {
-                pthread_mutex_unlock(&mutex_chairs);
-                break;  // No more students waiting, TA goes back to napping
-            }
-
-        }
-
-        if (sem_trywait(&sem_ta) == 0) {
-            break;  // Exit the TA thread if notified to do so
-        }
-    }
-
+void *ta_thread(void *arg){
     pthread_exit(NULL);
 }
 
 void *student_thread(void *arg) {
     int student_id = *((int *)arg);
 
-    while (1) {
-        program(student_id);  // Student programs for a period of time
-
-        pthread_mutex_lock(&mutex_chairs);
-
-        if (students_waiting < MAX_CHAIRS) {
-            students_waiting++;
-            pthread_mutex_unlock(&mutex_chairs);
-            sem_post(&sem_ta);  // Wake up the TA if sleeping
-
-            sem_wait(&sem_students);  // Wait for TA's help
-            printf("Student %d is getting help from the TA.\n", student_id);
-
-        }
-
-        else {
-            pthread_mutex_unlock(&mutex_chairs);
-            // No available chairs, student continues programming
-        }
+    while(1){
+        program(student_id);
     }
 
     pthread_exit(NULL);
@@ -113,4 +66,11 @@ void program(int student_id) {
     // Simulate programming by sleeping for a random period of time
     int sleep_time = rand() % 5 + 1;
     sleep(sleep_time);
+}
+
+void help_student(int student_id){
+    printf("Student %d is getting help from the TA.\n", student_id);
+    // Simulate helping by sleeping for a random period of time
+    int help_time = rand() % 5 + 4;
+    sleep(help_time);
 }
