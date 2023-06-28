@@ -19,7 +19,7 @@ pthread_mutex_t mutex_chairs = PTHREAD_MUTEX_INITIALIZER;
 void *ta_thread(void *arg);
 void *student_thread(void *arg);
 void program(int student_id);
-void help_student(int student_id);
+void help_student();
 int student_waiting(int student_id);
 void add_waiting(int student_id);
 void remove_waiting(int student_id);
@@ -37,9 +37,13 @@ int main() {
     pthread_create(&ta, NULL, ta_thread, NULL);
 
     // Create student threads
-    for (i = 0; i < MAX_STUDENTS; i++) {
-        student_ids[i] = i + 1;
+    for (i = 0; i < MAX_STUDENTS - 1; i++) {
+        student_ids[i] = i;
         pthread_create(&students[i], NULL, student_thread, (void *)&student_ids[i]);
+    }
+
+    for (i = 0; i < MAX_STUDENTS; i++) { // Required for continuity
+        pthread_join(students[i], NULL);
     }
 
     // Below should not happen unless a thread implodes
@@ -61,22 +65,29 @@ void *student_thread(void *arg) {
 
     while(student_waiting(student_id) == 0){
         program(student_id);
-
         // Need help from TA
 
-        pthread_mutex_lock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
+        //pthread_mutex_lock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
 
-        if(students_waiting != MAX_CHAIRS){
-            waiting_room
+        if(students_waiting < MAX_CHAIRS){
+            add_waiting(student_id);
+            students_waiting++;
+
+
+            // TODO: Add TA semaphore calling here
+
+            //sem_wait(&sem_ta);
+            printf("Student %d is getting help from the TA.\n", student_id);
+
         }
 
         else{
+            //pthread_mutex_unlock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
             printf("Student %d cannot get help from the TA.\n", student_id);
         }
 
     }
 
-    pthread_exit(NULL);
 }
 
 void program(int student_id) {
@@ -86,8 +97,8 @@ void program(int student_id) {
     sleep(sleep_time);
 }
 
-void help_student(int student_id){
-    printf("Student %d is getting help from the TA.\n", student_id);
+void help_student(){
+    printf("TA is helping a student.\n");
     // Simulate helping by sleeping for a random period of time
     sleep(help_time);
 }
@@ -102,9 +113,17 @@ int student_waiting(int student_id){ // Check if a student is already waiting fo
 }
 
 void add_waiting(int student_id){ // Adds a student to the waiting list
-
+    for(int i = 0; i < MAX_CHAIRS; i++){
+        if(waiting_room[i] == 0){ 
+            waiting_room[i] = student_id;
+        }
+    }
 }
 
-void add_waiting(int student_id){ // Removes a student from the waiting list
-    
+void remove_waiting(int student_id){ // Removes a student from the waiting list
+    for(int i = 0; i < MAX_CHAIRS; i++){
+        if(waiting_room[i] == student_id){ 
+            waiting_room[i] = 0;
+        }
+    }
 }
