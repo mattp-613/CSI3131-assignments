@@ -57,7 +57,21 @@ int main() {
 }
 
 void *ta_thread(void *arg){
-    pthread_exit(NULL);
+
+    while(1){
+        if(students_waiting > 0){
+
+            help_student();
+            sem_post(&sem_ta);
+            printf("Waiting list: %d\n", students_waiting);
+            students_waiting--;
+            printf("Waiting list now: %d\n", students_waiting);
+
+        }
+    }
+
+
+    return 0;
 }
 
 void *student_thread(void *arg) {
@@ -66,26 +80,28 @@ void *student_thread(void *arg) {
     while(student_waiting(student_id) == 0){
         program(student_id);
         // Need help from TA
-
         pthread_mutex_lock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
 
         if(students_waiting < MAX_CHAIRS){
             add_waiting(student_id);
             students_waiting++;
+            pthread_mutex_unlock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
+
 
 
             // TODO: Add TA semaphore calling here
 
 
             printf("Student %d is getting help from the TA.\n", student_id);
-
+            sem_wait(&sem_ta);
         }
 
         else{
             printf("Student %d cannot get help from the TA.\n", student_id);
+            pthread_mutex_unlock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
+
         }
 
-        pthread_mutex_unlock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
 
     }
     return 0;
@@ -94,14 +110,14 @@ void *student_thread(void *arg) {
 void program(int student_id) {
     printf("Student %d is programming.\n", student_id);
     // Simulate programming by sleeping for a random period of time
-    int sleep_time = rand() % 10 + 1;
+    int sleep_time = rand() % 5 + 1;
     sleep(sleep_time);
 }
 
 void help_student(){
     printf("TA is helping a student.\n");
     // Simulate helping by sleeping for a random period of time
-    sleep(help_time);
+    sleep(1);
 }
 
 int student_waiting(int student_id){ // Check if a student is already waiting for a chair
