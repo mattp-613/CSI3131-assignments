@@ -67,7 +67,7 @@ void *student_thread(void *arg) {
         program(student_id);
         // Need help from TA
 
-        //pthread_mutex_lock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
+        pthread_mutex_lock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
 
         if(students_waiting < MAX_CHAIRS){
             add_waiting(student_id);
@@ -76,24 +76,25 @@ void *student_thread(void *arg) {
 
             // TODO: Add TA semaphore calling here
 
-            //sem_wait(&sem_ta);
+
             printf("Student %d is getting help from the TA.\n", student_id);
 
         }
 
         else{
-            //pthread_mutex_unlock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
             printf("Student %d cannot get help from the TA.\n", student_id);
         }
 
-    }
+        pthread_mutex_unlock(&mutex_chairs); // Mutex ensures that only one student can run the chair check at a time
 
+    }
+    return 0;
 }
 
 void program(int student_id) {
     printf("Student %d is programming.\n", student_id);
     // Simulate programming by sleeping for a random period of time
-    int sleep_time = rand() % 5 + 1;
+    int sleep_time = rand() % 10 + 1;
     sleep(sleep_time);
 }
 
