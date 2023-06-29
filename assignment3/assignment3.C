@@ -9,7 +9,7 @@
 #define MAX_CHAIRS 3
 // Global variables
 int students_waiting = 0;
-int help_time = 6;
+int help_time = 1;
 int waiting_room[MAX_CHAIRS];
 sem_t sem_ta;
 sem_t sem_students;
@@ -63,9 +63,9 @@ void *ta_thread(void *arg){
 
             help_student();
             sem_post(&sem_ta);
-            printf("Waiting list: %d\n", students_waiting);
+            printf("TA is helping a student. Waiting list: %d\n", students_waiting);
             students_waiting--;
-            printf("Waiting list now: %d\n", students_waiting);
+            printf("TA helped someone. Waiting list now: %d\n", students_waiting);
 
         }
     }
@@ -117,7 +117,7 @@ void program(int student_id) {
 void help_student(){
     printf("TA is helping a student.\n");
     // Simulate helping by sleeping for a random period of time
-    sleep(1);
+    sleep(help_time);
 }
 
 int student_waiting(int student_id){ // Check if a student is already waiting for a chair
