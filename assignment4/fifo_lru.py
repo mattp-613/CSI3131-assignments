@@ -50,12 +50,10 @@ def lru(string, num_pages_frames):
 
         if char not in page.values(): #if it is not already in the dictionary (skip duplicates AND already existing)
             fault+=1
-            print(lru_list)
             for y in range(0, len(lru_list)):
                 if lru_value > lru_list[y]:
                     lru_value = lru_list[y]
                     lru_index = y
-                    print(lru_list)
                     
 
             page[lru_index] = char
@@ -63,8 +61,9 @@ def lru(string, num_pages_frames):
             #update LRU list
             lru_list[lru_index] = i
             #reset lru_value
-            lru_value = 0
-            #print(page)
+            lru_value = len(string)
+            print(page)
+            print(lru_list)
 
 if __name__ == "__main__":
     #string = random_page_reference_string(20)
