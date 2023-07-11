@@ -9,7 +9,6 @@ def random_page_reference_string(size):
     return page_reference
 
 def fifo(string, num_page_frames):
-    faults = 0
     page = dict()
     for i in range(0, num_page_frames):
         page[i] = ''
@@ -28,7 +27,6 @@ def fifo(string, num_page_frames):
     return "--FIFO--\ngiven string:{}\nfinal page:{}\nfaults:{}.".format(string, page, fault)
 
 def lru(string, num_pages_frames):
-    faults = 0
     page = dict()
     for i in range(0, num_page_frames):
         page[i] = ''
@@ -49,24 +47,30 @@ def lru(string, num_pages_frames):
         char = string[i]
 
         if char not in page.values(): #if it is not already in the dictionary (skip duplicates AND already existing)
+            print(page)
+            print(char)
             fault+=1
             for y in range(0, len(lru_list)):
-                if lru_value > lru_list[y]:
-                    lru_value = lru_list[y]
+                if lru_value > lru_list[y] - 1:
+                    lru_value = lru_list[y] - 1
                     lru_index = y
                     
 
             page[lru_index] = char
 
             #update LRU list
-            lru_list[lru_index] = i
+            lru_list[lru_index] = i + 1 #This +1 and the -1 above is entirely due to the first character having an index of 0
             #reset lru_value
+            #print(lru_value)
+            #print(lru_index)
             lru_value = len(string)
-            print(page)
-            print(lru_list)
+
+    return "--LRU--\ngiven string:{}\nfinal page:{}\nfaults:{}.".format(string, page, fault)
+
 
 if __name__ == "__main__":
-    #string = random_page_reference_string(20)
-    string = "000202391231232321423875342754377777774744447474474"
-    num_page_frames = 7
+    string = random_page_reference_string(20)
+    string = "232152453252"
+    num_page_frames = 3
     print(lru(string, num_page_frames))
+    print(fifo(string, num_page_frames))
