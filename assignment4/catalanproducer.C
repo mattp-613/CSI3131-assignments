@@ -1,24 +1,23 @@
-#include <iostream>
-#include <cstdlib>
-#include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
 int numCatalanNumbers;
 
-//factorial function
-long factorial(long value) {
+// Function to calculate the factorial
+long factorial(int value) {
     long result = 1;
     
-    for (long i = 1; i <= value; i++) {
+    for (int i = 1; i <= value; i++) {
         result *= i;  
     }
     
     return result;
 }
 
-//calculate Catalan number
+// Function to calculate the Catalan number
 long calculateCatalan(int n) {
     long catalan = 0;
 
@@ -32,38 +31,38 @@ long calculateCatalan(int n) {
 
 int main(int argc, char* argv[]) {
     if (argc == 2) {
-        numCatalanNumbers = std::atoi(argv[1]);
-    } 
-    
-    else {
-        std::cerr << "Usage: producer <num_of_catalan_numbers>\n";
+        numCatalanNumbers = atoi(argv[1]);
+    } else {
+        fprintf(stderr, "Usage: producer <num_of_catalan_numbers>\n");
         return 1;
     }
 
-    //create/open the shared memory segment
+    //create or open the shared memory segment
     key_t key = ftok("shared_memory_key", 1234);
     int shmId = shmget(key, numCatalanNumbers * sizeof(long), IPC_CREAT | 0666);
     if (shmId == -1) {
-        std::cerr << "Failed to create/open shared memory segment.\n";
+        perror("Failed to create/open shared memory segment");
         return 1;
     }
 
     //attach to the shared memory segment
-    long* sharedMemory = (long*)shmat(shmId, nullptr, 0);
+    long* sharedMemory = (long*)shmat(shmId, NULL, 0);
     if (sharedMemory == (void*)-1) {
-        std::cerr << "Failed to attach to shared memory segment.\n";
+        perror("Failed to attach to shared memory segment");
         return 1;
     }
 
     //generate and write the catalan numbers to shared memory
     for (int i = 0; i < numCatalanNumbers; i++) {
+        printf("i:%d\n",i);
         long catalanNumber = calculateCatalan(i);
         sharedMemory[i] = catalanNumber;
+        printf("%ld\n",catalanNumber);
     }
 
     //detach from the shared memory segment
     if (shmdt(sharedMemory) == -1) {
-        std::cerr << "Failed to detach from shared memory segment.\n";
+        perror("Failed to detach from shared memory segment");
         return 1;
     }
 
