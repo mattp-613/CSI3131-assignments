@@ -33,8 +33,42 @@ b. How many page faults occur for your algorithm for the following reference str
 for four page frames?
 1, 2, 3, 4, 5, 3, 4, 1, 6, 7, 8, 7, 8, 9, 7, 8, 9, 5, 4, 5, 4, 2.
 
+    [1, _, _, _] - Page fault
+    [1, 2, _, _] - Page fault
+    [1, 2, 3, _] - Page fault
+    [1, 2, 3, 4] - Page fault
+    [5, 2, 3, 4] - Page fault
+    [5, 2, 3, 4] - Page hit
+    [5, 2, 3, 4] - Page hit
+    [1, 2, 3, 4] - Page fault
+    [1, 2, 3, 6] - Page fault
+    [1, 2, 3, 6] - Page hit
+    [1, 2, 3, 7] - Page fault
+    [1, 2, 3, 8] - Page fault
+    [1, 2, 3, 8] - Page hit
+    [1, 2, 3, 9] - Page fault
+    [1, 2, 3, 9] - Page hit
+    [1, 2, 3, 5] - Page fault
+    [1, 2, 3, 5] - Page hit
+    [1, 2, 4, 5] - Page fault
+    [1, 2, 4, 5] - Page hit
+    [1, 2, 4, 5] - Page hit
+    [1, 2, 4, 5] - Page hit
+    [1, 2, 4, 5] - Page hit
+
+The total number of page faults is 12.
+
+
 
 
 c. What is the minimum number of page faults for an optimal page replacement
 strategy for the reference string in part b with four page frames
 
+The minimum number of page faults for an optimal page replacement strategy can be found by considering 
+all possible combinations of page frames and selecting the one with the fewest page faults. For the given 
+reference string [1, 2, 3, 4, 5, 3, 4, 1, 6, 7, 8, 7, 8, 9, 7, 8, 9, 5, 4, 5, 4, 2] and four page frames, 
+an optimal strategy would result in the following page faults:
+
+Optimal Page Faults: 6
+
+Therefore, the minimum number of page faults for an optimal page replacement strategy with four page frames is 6.
