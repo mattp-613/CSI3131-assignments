@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 
     //generate and write Catalan numbers to shared memory
     for (int i = 1; i < numCatalanNumbers + 1; i++) {
-        //printf("%ld\n", calculateCatalan(i));
+        printf("%ld\n", calculateCatalan(i));
         sharedMemory[i] = calculateCatalan(i);
     }
 

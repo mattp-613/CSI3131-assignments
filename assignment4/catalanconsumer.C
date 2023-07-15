@@ -21,19 +21,19 @@ int main() {
         return 1;
     }
 
-    //read and output the Catalan numbers from shared memory
+    //read and output the catalan numbers from shared memory
     int i = 0;
     while (sharedMemory[i] != 0) {
-        printf("%ld ", sharedMemory[i]);
+        printf("%ld ", sharedMemory[i]); //print numbers
         i++;
     }
     printf("\n");
 
-    //clean up and close shared memory
+    //clean up and close shared memory (garbage clean)
     munmap(sharedMemory, sizeof(long) * MAX_CATALAN_NUMBERS);
     close(shm_fd);
 
-    //unlink the shared memory object
+    //unlink the shared memory object (garbage clean)
     if (shm_unlink("/catalan_numbers") == -1) {
         perror("shm_unlink");
         return 1;
