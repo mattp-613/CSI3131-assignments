@@ -26,7 +26,7 @@ def fifo(string, num_page_frames):
 
     return "--FIFO--\ngiven string:{}\nfinal page:{}\nfaults:{}.".format(string, page, fault)
 
-def lru(string, num_pages_frames):
+def lru(string, num_page_frames):
     page = dict()
     for i in range(0, num_page_frames):
         page[i] = ''
@@ -70,7 +70,6 @@ def lru(string, num_pages_frames):
 
 if __name__ == "__main__":
     string = random_page_reference_string(20)
-    string = "232152453252"
-    num_page_frames = 3
+    num_page_frames = 7
     print(lru(string, num_page_frames))
     print(fifo(string, num_page_frames))
