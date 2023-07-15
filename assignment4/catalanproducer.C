@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-int numCatalanNumbers;
-
-// Function to calculate the factorial
 long factorial(int value) {
     long result = 1;
     
@@ -17,54 +14,53 @@ long factorial(int value) {
     return result;
 }
 
-// Function to calculate the Catalan number
 long calculateCatalan(int n) {
     long catalan = 0;
 
     for (int i = 1; i <= n; i++) {
-        //get the catalan value
         catalan = factorial(2 * i) / (factorial(i + 1) * factorial(i));
     }
 
     return catalan;
 }
 
-int main(int argc, char* argv[]) {
-    if (argc == 2) {
-        numCatalanNumbers = atoi(argv[1]);
-    } else {
-        fprintf(stderr, "Usage: producer <num_of_catalan_numbers>\n");
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s <num_catalan_numbers>\n", argv[0]);
         return 1;
     }
 
-    //create or open the shared memory segment
-    key_t key = ftok("shared_memory_key", 1234);
-    int shmId = shmget(key, numCatalanNumbers * sizeof(long), IPC_CREAT | 0666);
-    if (shmId == -1) {
-        perror("Failed to create/open shared memory segment");
+    int numCatalanNumbers = atoi(argv[1]);
+    const int SHARED_MEMORY_SIZE = sizeof(long) * numCatalanNumbers;
+
+    // Create a shared memory object
+    int shm_fd = shm_open("/catalan_numbers", O_CREAT | O_RDWR, 0666);
+    if (shm_fd == -1) {
+        perror("shm_open");
         return 1;
     }
 
-    //attach to the shared memory segment
-    long* sharedMemory = (long*)shmat(shmId, NULL, 0);
-    if (sharedMemory == (void*)-1) {
-        perror("Failed to attach to shared memory segment");
+    // Set the shared memory object size
+    if (ftruncate(shm_fd, SHARED_MEMORY_SIZE) == -1) {
+        perror("ftruncate");
         return 1;
     }
 
-    //generate and write the catalan numbers to shared memory
+    // Map the shared memory object into the process's address space
+    long *sharedMemory = (long *)mmap(NULL, SHARED_MEMORY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (sharedMemory == MAP_FAILED) {
+        perror("mmap");
+        return 1;
+    }
+
+    // Generate and write Catalan numbers to shared memory
     for (int i = 0; i < numCatalanNumbers; i++) {
-        printf("i:%d\n",i);
-        long catalanNumber = calculateCatalan(i);
-        sharedMemory[i] = catalanNumber;
-        printf("%ld\n",catalanNumber);
+        sharedMemory[i] = calculateCatalan(i + 1);
     }
 
-    //detach from the shared memory segment
-    if (shmdt(sharedMemory) == -1) {
-        perror("Failed to detach from shared memory segment");
-        return 1;
-    }
+    // Clean up and close shared memory
+    munmap(sharedMemory, SHARED_MEMORY_SIZE);
+    close(shm_fd);
 
     return 0;
 }
