@@ -18,7 +18,8 @@ def fifo(string, num_page_frames):
     for char in string:
         if char not in page.values(): #if it is not already in the dictionary (skip duplicates AND already existing)
 
-            fault+=1
+            if("" not in page.values()):
+                fault+=1
             if(FIFOcounter == num_page_frames): #so it will reset
                 FIFOcounter = 0
             page[FIFOcounter] = char
@@ -37,7 +38,6 @@ def lru(string, num_page_frames):
     for i in range(0, num_page_frames):
         lru_list.append(0)
 
-    #This algorithm is sort of complicated so let me explain:
     #Instead of having each page frame have a number for the amount of "hits" it has,
     #It will instead correlate to the last index in the character string the same value appeared in.
     #Therefore it will require less strain on the system.
@@ -47,9 +47,8 @@ def lru(string, num_page_frames):
         char = string[i]
 
         if char not in page.values(): #if it is not already in the dictionary (skip duplicates AND already existing)
-            print(page)
-            print(char)
-            fault+=1
+            if("" not in page.values()):
+                fault+=1
             for y in range(0, len(lru_list)):
                 if lru_value > lru_list[y] - 1:
                     lru_value = lru_list[y] - 1
@@ -70,6 +69,7 @@ def lru(string, num_page_frames):
 
 if __name__ == "__main__":
     string = random_page_reference_string(20)
-    num_page_frames = 7
+    string = "232152453252"
+    num_page_frames = 3
     print(lru(string, num_page_frames))
     print(fifo(string, num_page_frames))
